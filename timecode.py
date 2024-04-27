@@ -1,7 +1,11 @@
-import time
+#!/usr/bin/python3
+
+from time import sleep
 import math
 import mpv
-from datetime import datetime
+import datetime
+import os
+from enum import Enum
 
 time_format       = '%p %H:%M:%S'
 normal_beep       = 'chime.ogg'
@@ -14,16 +18,16 @@ signal_terminate  = 'terminate.ogg'
 player = mpv.MPV()
 
 def beep(b):
-	print(b)
-	player.play(b)
-	player.wait_for_playback()
+    print(b)
+    player.play(b)
+    player.wait_for_playback()
 
 def blanking_interval():
-	#player.play(blanking_interval)
-	time.sleep(1)
+    #player.play(blanking_interval)
+    sleep(1)
 def signal_terminate():
-	#player.play(signal_terminate)
-	time.sleep(0.5)
+    #player.play(signal_terminate)
+    sleep(0.5)
 
 def write_time(time):
 	hour = time.hour
@@ -91,4 +95,9 @@ def main():
 	write_time(now)
 
 if __name__ == '__main__':
-	main()
+    import sys
+    date = datetime.datetime.now().time()
+    try:
+        date = datetime.time(*[int(t) for t in sys.argv[1].split(":")])
+    except: pass
+    main(date)
