@@ -4,8 +4,6 @@ from time import sleep
 import math
 import mpv
 import datetime
-import os
-from enum import Enum
 
 time_format       = '%p %H:%M:%S'
 normal_beep       = 'chime.ogg'
@@ -44,13 +42,10 @@ def write_time(time):
 		return
 
 	if hour >= 7:
-		print("morning")
 		beep(short_low_beep)
 	if hour >= 12:
-		print("afternoon")
 		beep(short_low_beep)
 	if hour >= 20:
-		print("night")
 		beep(short_low_beep)
 
 	hour12 = hour
@@ -90,9 +85,8 @@ def write_time(time):
 	return
 
 
-def main():
-	now = datetime.now()
-	write_time(now)
+def main(now=datetime.datetime.now().time()):
+    print(write_time(now))
 
 if __name__ == '__main__':
     import sys
