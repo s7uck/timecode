@@ -4,17 +4,19 @@ import mpv
 from datetime import datetime
 
 time_format       = '%p %H:%M:%S'
-normal_beep       = 'beep.ogg'
-short_beep        = 'short_beep.ogg'
-low_beep          = 'low_beep.ogg'
-short_low_beep    = 'short_low_beep.ogg'
+normal_beep       = 'chime.ogg'
+short_beep        = 'short_chime.ogg'
+low_beep          = 'chime_low.ogg'
+short_low_beep    = 'short_chime.ogg'
 blanking_interval = 'empty.ogg'
 signal_terminate  = 'terminate.ogg'
 
 player = mpv.MPV()
 
-def beep(type):
-	player.play(type)
+def beep(b):
+	print(b)
+	player.play(b)
+	player.wait_for_playback()
 
 def blanking_interval():
 	#player.play(blanking_interval)
@@ -38,10 +40,13 @@ def write_time(time):
 		return
 
 	if hour >= 7:
+		print("morning")
 		beep(short_low_beep)
 	if hour >= 12:
+		print("afternoon")
 		beep(short_low_beep)
 	if hour >= 20:
+		print("night")
 		beep(short_low_beep)
 
 	hour12 = hour
@@ -54,20 +59,25 @@ def write_time(time):
 	second12 = math.floor(second / 5)
 	secondOffset = int(str(second)[-1])
 
+	print(hour12)
 	for h in range(hour12):
 		beep(normal_beep)
 
 	blanking_interval()
 
+	print(minute12)
 	for m in range(minute12):
 		beep(normal_beep)
+	print(minuteOffset)
 	for n in range(minuteOffset):
 		beep(short_beep)
 
 	blanking_interval()
 
+	print(second12)
 	for s in range(second12):
 		beep(normal_beep)
+	print(secondOffset)
 	for t in range(secondOffset):
 		beep(short_beep)
 
