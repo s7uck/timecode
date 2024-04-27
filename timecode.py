@@ -9,7 +9,7 @@ time_format       = '%p %H:%M:%S'
 normal_beep       = 'chime.ogg'
 short_beep        = 'short_chime.ogg'
 low_beep          = 'chime_low.ogg'
-short_low_beep    = 'short_chime.ogg'
+short_low_beep    = 'short_chime_low.ogg'
 blanking_interval = 'empty.ogg'
 signal_terminate  = 'terminate.ogg'
 
@@ -34,10 +34,10 @@ def write_time(time):
 
 	print(f"{hour > 12} {hour}:{minute}:{second}")
 
-	if hour == 0 and minute == 0 and second == 0:
-		beep(short_low_beep)
-		beep(short_low_beep)
-		beep(short_low_beep)
+	if hour == 0:
+		beep(low_beep)
+		beep(low_beep)
+		beep(low_beep)
 		signal_terminate()
 		return
 
