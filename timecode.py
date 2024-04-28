@@ -38,8 +38,6 @@ def write_time(time):
 		beep(low_beep)
 		beep(low_beep)
 		beep(low_beep)
-		signal_terminate()
-		return
 
 	if hour >= 7:
 		beep(short_low_beep)
