@@ -80,6 +80,7 @@ def write_time(time):
         string += "-"
 
     blanking_interval()
+    string += " "
 
     print(second12)
     for s in range(second12):
