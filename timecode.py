@@ -6,12 +6,6 @@ import mpv
 import datetime
 
 time_format = '%p %H:%M:%S'
-chime = 'chime.ogg'
-short_chime = 'short_chime.ogg'
-chime_low = 'chime_low.ogg'
-short_chime_low = 'short_chime_low.ogg'
-empty = 'empty.ogg'
-terminate = 'terminate.ogg'
 
 normal_beep = "*"
 short_beep = "-"
@@ -20,11 +14,20 @@ short_low_beep = "."
 blank = " "
 terminate = "\\"
 
+chimes = {
+    normal_beep: 'chime.ogg',
+    short_beep: 'short_chime.ogg',
+    low_beep: 'chime_low.ogg',
+    short_low_beep: 'short_chime_low.ogg',
+    blank: 'empty.ogg',
+    terminate: 'terminate.ogg'
+}
+
 
 player = mpv.MPV()
 
-def beep(b):
-    player.play(b)
+def beep(symbol):
+    player.play(chimes[symbol])
     player.wait_for_playback()
 
 def blanking_interval():
@@ -34,7 +37,7 @@ def signal_terminate():
     player.play(terminate)
     player.wait_for_playback()
 
-def parse_timecode(s, separator=blank, hour_beep=normal_beep, minute_beep=normal_beep, minute_unit_beep=short_beep, second_beep=normal_beep, second_unit_beep=short_beep):
+def time_decode(s, separator=blank, hour_beep=normal_beep, minute_beep=normal_beep, minute_unit_beep=short_beep, second_beep=normal_beep, second_unit_beep=short_beep):
     hour = 0
     minute = 0
     second = 0
@@ -52,19 +55,6 @@ def parse_timecode(s, separator=blank, hour_beep=normal_beep, minute_beep=normal
     if daytime > 0: hour += 12
 
     return datetime.time(hour, minute, second)
-
-def beep_from_string(s):
-    beeps = []
-    for symbol in s:
-        beeps.append({
-            "*": chime,
-            "-": short_chime,
-            "_": chime_low,
-            ".": short_chime_low,
-            " ": empty,
-            "\\": terminate
-        }[symbol])
-    return beeps
 
 def time_encode(time, separator=blank, hour_beep=normal_beep, minute_beep=normal_beep, minute_unit_beep=short_beep, second_beep=normal_beep, second_unit_beep=short_beep):
     hour = time.hour
@@ -98,78 +88,16 @@ def time_encode(time, separator=blank, hour_beep=normal_beep, minute_beep=normal
     return result
 
 
-def write_time(time):
-    hour = time.hour
-    minute = time.minute
-    second = time.second
-
-    string = ""
-
-    print(f"{hour > 12} {hour}:{minute}:{second}")
-
-    if hour == 0:
-        beep(low_beep)
-        beep(low_beep)
-        beep(low_beep)
-        string = "___"
-
-    if hour >= 7:
-        beep(short_low_beep)
-        string += "."
-    if hour >= 12:
-        beep(short_low_beep)
-        string += "."
-    if hour >= 20:
-        beep(short_low_beep)
-        string += "."
-
-    hour12 = hour
-    if hour > 12:
-        hour12 = hour - 12
-
-    minute12 = math.floor(minute / 5)
-    minuteOffset = int(str(minute)[-1]) #sorry i couldn't figure out a better way right now
-
-    second12 = math.floor(second / 5)
-    secondOffset = int(str(second)[-1])
-
-    print(hour12)
-    for h in range(hour12):
-        beep(normal_beep)
-        string += "*"
-
-    blanking_interval()
-    string += " "
-
-    print(minute12)
-    for m in range(minute12):
-        beep(normal_beep)
-        string += "*"
-    print(minuteOffset)
-    for n in range(minuteOffset):
-        beep(short_beep)
-        string += "-"
-
-    blanking_interval()
-    string += " "
-
-    print(second12)
-    for s in range(second12):
-        beep(normal_beep)
-        string += "*"
-    print(secondOffset)
-    for t in range(secondOffset):
-        beep(short_beep)
-        string += "-"
-
-    blanking_interval()
-    signal_terminate()
-    string += "  "
-    return string
-
-
 def main(now=datetime.datetime.now().time()):
-    print(write_time(now))
+    time_string = time_encode(now, second_beep="", second_unit_beep="")
+    if now.hour >= 7: print("·", end=" ")
+    if now.hour >= 12: print("·", end=" ")
+    if now.hour >= 20: print("·", end=" ")
+    print(f"{now.hour:>02}:{now.minute:>02}:{now.second:>02}")
+    for b in time_string:
+        beep(b)
+    print (time_string)
+    return time_string
 
 if __name__ == '__main__':
     import sys
