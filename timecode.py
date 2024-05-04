@@ -4,8 +4,11 @@ from time import sleep
 import math
 import mpv
 import datetime
+from os import path
 
 time_format = '%p %H:%M:%S'
+
+base_folder = path.dirname(__file__)
 
 normal_beep = "*"
 short_beep = "-"
@@ -27,7 +30,7 @@ chimes = {
 player = mpv.MPV()
 
 def beep(symbol):
-    player.play(chimes[symbol])
+    player.play(path.join(base_folder, chimes[symbol]))
     player.wait_for_playback()
 
 def blanking_interval():
