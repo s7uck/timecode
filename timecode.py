@@ -8,7 +8,7 @@ from os import path
 
 time_format = '%p %H:%M:%S'
 
-base_folder = path.dirname(__file__)
+base_folder = "/usr/share/sounds"
 
 normal_beep = "*"
 short_beep = "-"
